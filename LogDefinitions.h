@@ -29,7 +29,7 @@ namespace qlog
 
 
 
-	static std::string logLevelToString(QuickLogLevel level)
+	static std::string log_level_to_string(QuickLogLevel level)
 	{
 		switch (level)
 		{

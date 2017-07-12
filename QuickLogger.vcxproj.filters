@@ -16,6 +16,9 @@
     <Filter Include="Sinks">
       <UniqueIdentifier>{2b399928-3a1f-40ec-a6ac-14cb4b812e91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Formatters">
+      <UniqueIdentifier>{a8de834f-807f-46a8-8d12-764715cff497}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -54,14 +57,20 @@
     <ClInclude Include="ConcurrentQ.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="QuickLoggerSinks.h">
+      <Filter>Sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="StdoutSink.h">
+      <Filter>Sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultFormatter.hpp">
+      <Filter>Formatters</Filter>
+    </ClInclude>
+    <ClInclude Include="FormatProvider.h">
+      <Filter>Formatters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FileSink.cpp">
-      <Filter>Sinks</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugTraceSink.cpp">
-      <Filter>Sinks</Filter>
-    </ClCompile>
     <ClCompile Include="LogManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

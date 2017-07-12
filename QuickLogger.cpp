@@ -3,12 +3,6 @@
 #include "FileSink.h"
 
 
-void qlog::QuickLogger::initialize(const std::string& moduleName )
-{
-	m_moduleName = moduleName;
-	m_logManager.register_sink(std::make_unique<FileSink>(moduleName + ".log"));
-	m_logManager.register_sink(std::make_unique<DebugTraceSink>());
-}
 
 void qlog::QuickLogger::log(QuickLogLevel level, std::string&& file, std::string&& function, std::string&& msg, int line)
 {

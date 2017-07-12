@@ -48,10 +48,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\..\..\Lib\visualc\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\..\..\Lib\visualc\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -102,18 +104,20 @@
     <ClInclude Include="ConcurrentQ.hpp" />
     <ClInclude Include="ConsumerQ.hpp" />
     <ClInclude Include="DebugTraceSink.h" />
+    <ClInclude Include="DefaultFormatter.hpp" />
     <ClInclude Include="FileSink.h" />
+    <ClInclude Include="FormatProvider.h" />
     <ClInclude Include="ItemPool.hpp" />
     <ClInclude Include="QuickLogger.h" />
     <ClInclude Include="LogManager.h" />
     <ClInclude Include="LogDefinitions.h" />
     <ClInclude Include="LogItem.h" />
     <ClInclude Include="LogSink.h" />
+    <ClInclude Include="QuickLoggerSinks.h" />
+    <ClInclude Include="StdoutSink.h" />
     <ClInclude Include="Utils.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DebugTraceSink.cpp" />
-    <ClCompile Include="FileSink.cpp" />
     <ClCompile Include="QuickLogger.cpp" />
     <ClCompile Include="LogManager.cpp" />
   </ItemGroup>

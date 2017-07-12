@@ -9,6 +9,7 @@
 
 namespace qlog
 {
+	
 	class LogSink
 	{
 		friend class LogManager;
@@ -48,7 +49,7 @@ namespace qlog
 		LogManager* m_logManager;
 		ConsumerQ<LogItem*> m_logItems;
 		std::thread m_logT;
-
+		
 	};
 }
 #endif

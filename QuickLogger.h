@@ -3,8 +3,11 @@
 #define BOOST_USE_WINDOWS_H 1
 
 #include "LogManager.h"
+#include "sstream"
 #include <filesystem>
-#include <sstream>
+
+#include "DefaultFormatter.hpp"
+
 
 namespace fs = std::experimental::filesystem;
 
@@ -20,7 +23,16 @@ namespace qlog
 			return logger;
 		}
 
-		void initialize(const std::string& moduleName);
+		template <template<class F> class TSink, class Formatter = formatters::DefaultFormatter>
+		TSink<Formatter>& append_sink()
+		{
+			static_assert(std::is_base_of_v<LogSink, TSink<Formatter>>, "Class does not derive from LogSink!");
+			auto pSink = std::make_unique<TSink<Formatter>>();
+			auto& refSink = *pSink;
+			m_logManager.register_sink(std::move(pSink));	
+			return refSink;
+		}
+
 		void set_log_level(QuickLogLevel level) { m_logLevel = level; }
 		QuickLogLevel log_level() const { return m_logLevel; }
 
@@ -30,8 +42,7 @@ namespace qlog
 	private:
 		QuickLogger() {}
 		QuickLogLevel m_logLevel = qlog::QuickLogLevel::log_debug;
-		LogManager m_logManager;
-		std::string m_moduleName;
+		LogManager m_logManager;		
 	};
 }
 

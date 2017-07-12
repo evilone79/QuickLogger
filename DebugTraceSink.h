@@ -5,16 +5,28 @@
 
 
 #include "LogSink.h"
+#include "FormatProvider.h"
 
 namespace qlog
 {
-	class DebugTraceSink : public LogSink
+	namespace sinks
 	{
-	public:
-		DebugTraceSink() {}
+		template<class Formatter>
+		class DebugTraceSink : public LogSink, FormatProvider<Formatter>
+		{
+		public:
+			DebugTraceSink() {}
 
 
-		void handle_log_item(const LogItem* logItem) override;
-	};
+			void handle_log_item(const LogItem* logItem) override;
+		};
+
+		template <class Formatter>
+		void DebugTraceSink<Formatter>::handle_log_item(const LogItem* logItem)
+		{
+			auto msg = Formatter::form_message(*logItem);
+			OutputDebugStringA(msg.c_str());
+		}
+	}
 }
 #endif
