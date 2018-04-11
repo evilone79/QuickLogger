@@ -3,56 +3,66 @@
 
 #include <utility>
 #include <algorithm>
+#include <vector>
 #include "ConsumerQ.hpp"
+#include <iostream>
 
 namespace qlog
 {
-	template <typename Item, int Capacity>
-	class ItemPool
-	{
-		static_assert(std::is_default_constructible<Item>::value, "Pool item must be default constructible");
+	template <typename ItemT>
+	class pool_slot
+	{		
 	public:
-		ItemPool() noexcept
-		{
-			std::generate(m_q.begin(), m_q.end(), [] {return new Item(); });
+		pool_slot(std::atomic_size_t& syncCount) : _syncCount(syncCount) {}
+		
+		ItemT * item() noexcept { return &_item; }
+		bool available() const { return _refCnt.load() == 0; }
+		void inc_ref()
+		{			
+			_refCnt.fetch_add(1); 
+			_syncCount.fetch_add(1);			
 		}
-
-		~ItemPool()
+		void dec_ref()
 		{
-			for (auto&& pItem : m_q) delete pItem;
-		}
-
-		void release_item(Item* item)
-		{
-			std::lock_guard<std::mutex> lock(m_mtx);
-			m_q.push_back(item);
-			m_waiter.notify_one();
-		}
-
-		Item* get_item()
-		{
-			std::lock_guard<std::mutex> lock(m_mtx);
-			Item* item = nullptr;
-			if (m_q.empty())
-			{
-				m_q.emplace_back(new Item());
-				++m_itemCount;
-			}
-			item = m_q.front();
-			m_q.pop_front();
-			return item;
-		}
-
-		void synchronize()
-		{
-			std::unique_lock<std::mutex> lock(m_mtx);
-			m_waiter.wait(lock, [this] {return m_q.size() == m_itemCount; });
-		}
-
+			_refCnt.fetch_sub(1); 
+			_syncCount.fetch_sub(1);			
+		}		
 	private:
-		long m_itemCount = Capacity;
-		std::mutex m_mtx;
-		std::condition_variable m_waiter;
-		std::deque<Item*> m_q{ Capacity };
+		ItemT _item;
+		volatile std::atomic_size_t _refCnt = 0;
+		std::atomic_size_t& _syncCount;
 	};
+
+	
+	
+	template <typename ItemT, size_t Cap>
+	class sequential_pool
+	{		
+	public:
+		sequential_pool()
+		{
+			std::generate(std::begin(_items), std::end(_items), 
+				[&] {return std::make_unique<pool_slot<ItemT>>(s_syncCount); });
+		}
+		pool_slot<ItemT>* get_slot()
+		{
+			std::lock_guard<std::mutex> lock(_mtx);			
+			while(!_items[_index]->available()){}
+			auto slot = _items[_index].get();
+			++_index %= _items.size();			
+			return slot;
+		}
+		void synchronize()
+		{			
+			while(s_syncCount > 0){}			
+		}
+	private:
+		size_t _index = 0;
+		std::mutex _mtx;
+		std::vector<std::unique_ptr<pool_slot<ItemT>>> _items{ Cap };
+		static std::atomic_size_t s_syncCount;
+	};
+
+	template <typename ItemT, size_t Cap>
+	std::atomic_size_t sequential_pool<ItemT, Cap>::s_syncCount = 0;
 }

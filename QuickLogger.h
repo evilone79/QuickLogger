@@ -3,24 +3,30 @@
 #define BOOST_USE_WINDOWS_H 1
 
 #include "LogManager.h"
-#include "sstream"
-#include <filesystem>
-
+#include <sstream>
 #include "DefaultFormatter.hpp"
-
-
-namespace fs = std::experimental::filesystem;
+#include "NoTimeFormatter.hpp"
+#include "GlobalSingleton.h"
 
 namespace qlog
 {
-	class QuickLogger
+	inline std::string get_file_name(const char* path)
 	{
+		if (!path) return std::string{};
+		auto toks = std::strrchr(path, '\\');
+		if (toks)
+			return toks + 1;
+		return std::string{};
+	}
+
+	class QuickLogger : public GlobalSingleton<QuickLogger, true>
+	{
+		friend class GlobalSingleton<QuickLogger, true>;		
 	public:
 
 		static QuickLogger& instance()
 		{
-			static QuickLogger logger;
-			return logger;
+			return *GlobalSingleton::instance(LOGGER_PTR_GLOBAL);
 		}
 
 		template <template<class F> class TSink, class Formatter = formatters::DefaultFormatter>
@@ -38,9 +44,9 @@ namespace qlog
 
 		void log(QuickLogLevel level, std::string&& file, std::string&& function, std::string&& msg, int line);
 
-
+		void flush() { m_logManager.flush(); }
 	private:
-		QuickLogger() {}
+		QuickLogger() noexcept {}
 		QuickLogLevel m_logLevel = qlog::QuickLogLevel::log_debug;
 		LogManager m_logManager;		
 	};
@@ -52,29 +58,29 @@ namespace qlog
 
 #define LOG(level_, message_){ \
 	QuickLog.log(level_, \
-	fs::path(__FILE__).filename().string(), \
+	qlog::get_file_name(__FILE__), \
 	__FUNCTION__, static_cast<std::ostringstream&>(std::ostringstream().flush() << message_).str(), __LINE__); }
 
 #define LOG_F(level_, format_, ...){ \
 	constexpr size_t buffSize = 1024; \
 	char msg[buffSize] = { 0 }; \
 	auto count = _snprintf_s(msg, buffSize, _TRUNCATE, format_, __VA_ARGS__); \
-	QuickLog.log(level_, fs::path(__FILE__).filename().string(), __FUNCTION__, msg, __LINE__ ); }
+	QuickLog.log(level_, qlog::get_file_name(__FILE__), __FUNCTION__, msg, __LINE__ ); }
 
 
-#define LogUtil(message_) LOG(qlog::QuickLogLevel::log_none, message_)
+#define LogUtil(message_) LOG(qlog::QuickLogLevel::log_util, message_)
 #define LogDebug(message_) LOG(qlog::QuickLogLevel::log_debug, message_)
 #define LogInfo(message_) LOG(qlog::QuickLogLevel::log_info, message_)
 #define LogWarning(message_) LOG(qlog::QuickLogLevel::log_warning, message_)
 #define LogError(message_) LOG(qlog::QuickLogLevel::log_error, message_)
-#define LogCritical(message_) LOG(qlog::QuickLogLevel::log_critical, message_)
+#define LogFatal(message_) LOG(qlog::QuickLogLevel::log_fatal, message_)
 
-#define LogUtilF(format_, ...) LOG_F(qlog::QuickLogLevel::log_none, format_, __VA_ARGS__)
+#define LogUtilF(format_, ...) LOG_F(qlog::QuickLogLevel::log_util, format_, __VA_ARGS__)
 #define LogDebugF(format_, ...) LOG_F(qlog::QuickLogLevel::log_debug, format_, __VA_ARGS__)
 #define LogInfoF(format_, ...) LOG_F(qlog::QuickLogLevel::log_info, format_, __VA_ARGS__)
 #define LogWarningF(format_, ...) LOG_F(qlog::QuickLogLevel::log_warning, format_, __VA_ARGS__)
 #define LogErrorF(format_, ...) LOG_F(qlog::QuickLogLevel::log_error, format_, __VA_ARGS__)
-#define LogCriticalF(format_, ...) LOG_F(qlog::QuickLogLevel::log_critical, format_, __VA_ARGS__)
+#define LogFatalF(format_, ...) LOG_F(qlog::QuickLogLevel::log_fatal, format_, __VA_ARGS__)
 
 
 

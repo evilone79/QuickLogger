@@ -61,8 +61,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <AdditionalIncludeDirectories>..\QognifyUtils\src\QognifyUtils\Utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -85,6 +86,7 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <DebugInformationFormat>None</DebugInformationFormat>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\QognifyUtils\src\QognifyUtils\Utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -101,6 +103,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Formatter.hpp" />
     <ClInclude Include="ConcurrentQ.hpp" />
     <ClInclude Include="ConsumerQ.hpp" />
     <ClInclude Include="DebugTraceSink.h" />
@@ -108,11 +111,13 @@
     <ClInclude Include="FileSink.h" />
     <ClInclude Include="FormatProvider.h" />
     <ClInclude Include="ItemPool.hpp" />
+    <ClInclude Include="NoTimeFormatter.hpp" />
     <ClInclude Include="QuickLogger.h" />
     <ClInclude Include="LogManager.h" />
     <ClInclude Include="LogDefinitions.h" />
     <ClInclude Include="LogItem.h" />
     <ClInclude Include="LogSink.h" />
+    <ClInclude Include="QuickLoggerGlobal.h" />
     <ClInclude Include="QuickLoggerSinks.h" />
     <ClInclude Include="StdoutSink.h" />
     <ClInclude Include="Utils.hpp" />

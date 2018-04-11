@@ -11,18 +11,18 @@ namespace qlog
 {
 	
 	class LogSink
-	{
-		friend class LogManager;
+	{		
+		
 	public:
 		LogSink()
 		{
 			m_logT = std::thread([this]()
 			{
-				LogItem* item = nullptr;
-				while (m_logItems.try_fetch_item(item))
+				pool_slot<LogItem>* slot = nullptr;
+				while (m_logItems.try_fetch_item(slot))
 				{
-					handle_log_item(item);
-					m_logManager->release_log_item(item);
+					handle_log_item(slot->item());
+					slot->dec_ref();
 				}
 			});
 		}
@@ -31,9 +31,10 @@ namespace qlog
 		{
 		}
 
-		void submit(LogItem* logItem)
+		void submit(pool_slot<LogItem>* itemSlot)
 		{
-			m_logItems.put_item(logItem);
+			itemSlot->inc_ref();
+			m_logItems.put_item(itemSlot);
 		}
 
 		void synchronize()
@@ -45,9 +46,8 @@ namespace qlog
 			}
 		}
 	protected:
-		virtual void handle_log_item(const LogItem* item) = 0;
-		LogManager* m_logManager;
-		ConsumerQ<LogItem*> m_logItems;
+		virtual void handle_log_item(const LogItem* item) = 0;		
+		ConsumerQ<pool_slot<LogItem>*> m_logItems;
 		std::thread m_logT;
 		
 	};

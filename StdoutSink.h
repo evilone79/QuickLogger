@@ -4,17 +4,17 @@
 #include "FormatProvider.h"
 
 
-#define CON_BACK_BLACK      0
-
-#define CON_FORE_BLACK      0
-#define CON_FORE_RED       FOREGROUND_RED
-#define CON_FORE_LIGHT_RED    FOREGROUND_RED | FOREGROUND_INTENSITY
-#define CON_FORE_GREEN      FOREGROUND_GREEN
-#define CON_FORE_LIGHT_GREEN   FOREGROUND_GREEN | FOREGROUND_INTENSITY
-#define CON_FORE_YELLOW      FOREGROUND_GREEN | FOREGROUND_RED
-#define CON_FORE_LIGHT_YELLOW   FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
-#define CON_FORE_GRAY       FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
-#define CON_FORE_WHITE      FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
+//#define CON_BACK_BLACK			0
+//
+//#define CON_FORE_BLACK			0
+//#define CON_FORE_RED			FOREGROUND_RED
+//#define CON_FORE_LIGHT_RED		FOREGROUND_RED | FOREGROUND_INTENSITY
+//#define CON_FORE_GREEN			FOREGROUND_GREEN
+//#define CON_FORE_LIGHT_GREEN	FOREGROUND_GREEN | FOREGROUND_INTENSITY
+//#define CON_FORE_YELLOW			FOREGROUND_GREEN | FOREGROUND_RED
+//#define CON_FORE_LIGHT_YELLOW   FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
+//#define CON_FORE_GRAY			FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
+//#define CON_FORE_WHITE			FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY
 
 namespace qlog
 {
@@ -23,6 +23,24 @@ namespace qlog
 		template<class Formatter>
 		class StdoutSink : public LogSink, FormatProvider<Formatter>
 		{
+			enum {
+				BLACK = 0,
+				DARKBLUE = FOREGROUND_BLUE,
+				DARKGREEN = FOREGROUND_GREEN,
+				DARKCYAN = FOREGROUND_GREEN | FOREGROUND_BLUE,
+				DARKRED = FOREGROUND_RED,
+				DARKMAGENTA = FOREGROUND_RED | FOREGROUND_BLUE,
+				DARKYELLOW = FOREGROUND_RED | FOREGROUND_GREEN,
+				DARKGRAY = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+				GRAY = FOREGROUND_INTENSITY,
+				BLUE = FOREGROUND_INTENSITY | FOREGROUND_BLUE,
+				GREEN = FOREGROUND_INTENSITY | FOREGROUND_GREEN,
+				CYAN = FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE,
+				RED = FOREGROUND_INTENSITY | FOREGROUND_RED,
+				MAGENTA = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE,
+				YELLOW = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN,				
+				WHITE = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+			};
 		public:
 			StdoutSink();
 			~StdoutSink();
@@ -68,22 +86,26 @@ namespace qlog
 		template<class Formatter>
 		void qlog::sinks::StdoutSink<Formatter>::set_font_color(QuickLogLevel logLevel) const
 		{
-			WORD colorSet = CON_BACK_BLACK | CON_FORE_GRAY;
+			WORD colorSet = BLACK | DARKGRAY;
 			switch (logLevel)
 			{
-			case QuickLogLevel::log_critical:
+			case QuickLogLevel::log_fatal:
+				colorSet = BLACK | MAGENTA;
+				break;
 			case QuickLogLevel::log_error:
-				colorSet = CON_BACK_BLACK | CON_FORE_LIGHT_RED;
+				colorSet = BLACK | RED;
 				break;
 			case QuickLogLevel::log_warning:
-				colorSet = CON_BACK_BLACK | CON_FORE_LIGHT_YELLOW;
+				colorSet = BLACK | YELLOW;
 				break;
 			case QuickLogLevel::log_info:
-				colorSet = CON_BACK_BLACK | CON_FORE_LIGHT_GREEN;
+				colorSet = BLACK | GREEN;
 				break;
 			case QuickLogLevel::log_debug:
-			case QuickLogLevel::log_none:
-				colorSet = CON_BACK_BLACK | CON_FORE_GRAY;
+				colorSet = BLACK | GRAY;
+				break;
+			case QuickLogLevel::log_util:
+				colorSet = BLACK | DARKGRAY;
 				break;
 			}
 

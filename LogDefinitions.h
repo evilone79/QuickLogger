@@ -5,26 +5,26 @@
 
 namespace qlog
 {
-#define LOGGER_PTR_GLOBAL "g_infraLogSingleton"
+#define LOGGER_PTR_GLOBAL "g_QLoggerSingleton"
 
-#define INFRA_LOG_LEVEL_NONE                             "NONE"
-#define INFRA_LOG_LEVEL_CRITICAL                         "CRITICAL"
-#define INFRA_LOG_LEVEL_WARNING                          "WARNING"
-#define INFRA_LOG_LEVEL_ERROR                            "ERROR"
-#define INFRA_LOG_LEVEL_INFO                             "INFO"
-#define INFRA_LOG_LEVEL_DEBUG                            "DEBUG"
+#define INFRA_LOG_LEVEL_UTIL         "UTIL"
+#define INFRA_LOG_LEVEL_FATAL		 "FATAL"
+#define INFRA_LOG_LEVEL_WARNING      "WARN"
+#define INFRA_LOG_LEVEL_ERROR        "ERROR"
+#define INFRA_LOG_LEVEL_INFO         "INFO"
+#define INFRA_LOG_LEVEL_DEBUG        "DEBUG"
 
 
 
 
 	enum class QuickLogLevel : int
 	{
-		log_critical = 5,
+		log_fatal = 5,
 		log_error = 4,
 		log_warning = 3,
 		log_info = 2,
 		log_debug = 1,
-		log_none = 0
+		log_util = 0
 	};
 
 
@@ -33,8 +33,8 @@ namespace qlog
 	{
 		switch (level)
 		{
-		case QuickLogLevel::log_critical:
-			return INFRA_LOG_LEVEL_CRITICAL;
+		case QuickLogLevel::log_fatal:
+			return INFRA_LOG_LEVEL_FATAL;
 		case QuickLogLevel::log_warning:
 			return INFRA_LOG_LEVEL_WARNING;
 		case QuickLogLevel::log_error:
@@ -44,7 +44,7 @@ namespace qlog
 		case QuickLogLevel::log_debug:
 			return INFRA_LOG_LEVEL_DEBUG;
 		default:
-			return INFRA_LOG_LEVEL_NONE;
+			return INFRA_LOG_LEVEL_UTIL;
 		}
 	}
 

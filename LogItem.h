@@ -27,8 +27,6 @@ namespace qlog
 		std::string m_message;
 		unsigned int m_line;
 		std::thread::id m_tid;
-		std::atomic_size_t m_releaseCount = 0;
-
 	};
 }
 #endif
